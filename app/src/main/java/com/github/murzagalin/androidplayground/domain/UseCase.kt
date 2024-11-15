@@ -8,7 +8,8 @@ interface UseCase {
 
 }
 
-class UseCaseImpl: UseCase {
+
+class UseCaseImpl @Inject constructor(): UseCase {
 
     override suspend fun run() = "Stub value"
 

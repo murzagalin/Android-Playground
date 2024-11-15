@@ -2,17 +2,18 @@ package com.github.murzagalin.androidplayground.di
 
 import com.github.murzagalin.androidplayground.domain.UseCase
 import com.github.murzagalin.androidplayground.domain.UseCaseImpl
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
-import dagger.Reusable
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityRetainedComponent
 
 
 @Module
-class DomainModule {
+@InstallIn(ActivityRetainedComponent::class)
+abstract class DomainModule {
 
-    @Provides
-    @Reusable
-    fun provideUseCase(): UseCase {
-        return UseCaseImpl()
-    }
+
+    @Binds
+    abstract fun bindsUseCase(useCaseImpl: UseCaseImpl): UseCase
+
 }
