@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.github.murzagalin.androidplayground.domain.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,8 +22,8 @@ class MainViewModel @Inject constructor(
 
     val dataFlow = MutableStateFlow("")
 
-    private val errorHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-        Log.e(TAG, "Error loading data: ", throwable)
+    private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+
     }
 
     init {
@@ -32,8 +31,8 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadData() {
-        viewModelScope.launch {
-            val data = withContext(Dispatchers.IO + errorHandler) {
+        viewModelScope.launch(errorHandler) {
+            val data = withContext(AppDispatchers.Io) {
                 useCase.run()
             }
 

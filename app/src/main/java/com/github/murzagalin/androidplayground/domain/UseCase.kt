@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 interface UseCase {
 
+    @Throws(Throwable::class)
     suspend fun run(): String
 
 }
