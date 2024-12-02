@@ -53,7 +53,12 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.hilt)
+
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+
     kapt(libs.hilt.compiler)
+    kapt(libs.room.compiler) // TODO replace with KSP
 
     testImplementation(libs.junit)
     testImplementation(libs.mockito)

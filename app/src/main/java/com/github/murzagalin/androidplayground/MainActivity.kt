@@ -17,7 +17,10 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,6 +35,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.murzagalin.androidplayground.ui.theme.AndroidPlaygroundTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,38 +72,78 @@ fun BoxScope.MainContent(
     viewModel: MainViewModel = viewModel()
 ) {
 
-    val data by viewModel.dataFlow.collectAsState()
+    val data = viewModel.usersFlow.collectAsState()
+    val value = data.value
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale: Float by animateFloatAsState(if (pressed) 0.97f else 1f, label = "scale")
-    val elevation: Dp by animateDpAsState(if (pressed) 1.dp else 8.dp, label = "elevation")
-    val paddingColor: Color by animateColorAsState(if (pressed) Color.White else Color.Blue, label = "color")
-
-    Box(
-        modifier = Modifier
-            .scale(scale)
-            .graphicsLayer {
-                shadowElevation = elevation.toPx()
+    when (value) {
+        MainViewModel.ViewState.Empty -> {}
+        MainViewModel.ViewState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    "Loading...",
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
-            .background(Color.Red)
-            .padding(16.dp)
-            .size(90.dp)
-            .background(paddingColor)
-            .padding(8.dp)
-            .align(Alignment.Center)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = {}
-            )
-    ) {
+        }
+        is MainViewModel.ViewState.Error -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    "Error: ${value.error.message}",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+        is MainViewModel.ViewState.Success -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(value.users) {
+                        Text(
+                            "${it.username}. ${it.email}",
+                            modifier = Modifier.padding(
+                                all = 12.dp
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+
+    /*
+        val interactionSource = remember { MutableInteractionSource() }
+        val pressed by interactionSource.collectIsPressedAsState()
+        val scale: Float by animateFloatAsState(if (pressed) 0.97f else 1f, label = "scale")
+        val elevation: Dp by animateDpAsState(if (pressed) 1.dp else 8.dp, label = "elevation")
+        val paddingColor: Color by animateColorAsState(if (pressed) Color.White else Color.Blue, label = "color")
+
+
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Cyan)
-        )
-    }
+                .scale(scale)
+                .graphicsLayer {
+                    shadowElevation = elevation.toPx()
+                }
+                .background(Color.Red)
+                .padding(16.dp)
+                .size(90.dp)
+                .background(paddingColor)
+                .padding(8.dp)
+                .align(Alignment.Center)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = {}
+                )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Cyan)
+            )
+        }*/
 }
 
 

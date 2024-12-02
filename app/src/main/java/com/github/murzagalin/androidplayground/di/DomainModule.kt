@@ -12,7 +12,6 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 @InstallIn(ActivityRetainedComponent::class)
 abstract class DomainModule {
 
-
     @Binds
     abstract fun bindsUseCase(useCaseImpl: UseCaseImpl): UseCase
 
